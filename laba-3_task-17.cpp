@@ -1,20 +1,66 @@
-﻿// laba-3_task-17.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿// 17. Дано Trie-дерево. Посчитать количество слов, содержащих заданную подстроку.
+#include "Trie_Tree.h"
+#include <Windows.h>
+#include <string>
+// Функция для проверки чередования гласных и согласных
 
-#include <iostream>
+const std::string gl = "eyuioa";
 
-int main()
-{
-    std::cout << "Hello World!\n";
+class my_str {
+public:
+    std::string str;
+    int size;
+};
+my_str operator+(my_str lhs, const char c) {
+    lhs.str += c;
+    ++lhs.size;
+    return lhs;
+}
+int cnt_alternating_words(ttree::ptrNODE t, my_str word, const my_str& substring) {
+    std::cout << word.str << " ";
+    if (word.size >= substring.size) {
+        bool fg = true;
+        int i = 0;
+        while (i < substring.size && fg) {
+            if (word.str[word.size - substring.size + i] != substring.str[i])
+                fg = false;
+            ++i;
+        }
+        if (t->eow || fg)
+            return fg;
+    }
+    else
+        if (t->eow) {
+            return 0;
+        }
+
+    int res = 0;
+    for (int i = 0; i < 26; i++)
+        if (t->ptrs[i])
+            res += cnt_alternating_words(t->ptrs[i], word + char(i + 'a'), substring);
+    return res;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+std::istream& operator >> (std::istream& in, my_str& my_string)
+{
+    std::string s;
+    in >> s;
+    my_string.str = s;
+    my_string.size = s.length();
+    return in;
+}
+// Пример использования
+int main() {
+    SetConsoleOutputCP(1251);
+
+    ttree::TTREE trie("data.txt");
+    trie.print(true);
+    my_str word{}, start{};
+    std::cout << "Задайте необходимое вам слово: ";
+    std::cin >> word;
+    std::cout << "Кол-во слов содержащих подстроку:" << word.str << "\n";
+    std::cout << cnt_alternating_words(trie.get_root(), start , word);
+
+    return 0;
+}
