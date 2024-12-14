@@ -1,3 +1,14 @@
 apple
 app
 apricot
+banana
+berry
+blueberry
+cat
+caterpillar
+catalog
+doghouse
+dog
+hotdog
+hello
+world

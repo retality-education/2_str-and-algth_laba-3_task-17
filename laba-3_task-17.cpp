@@ -39,23 +39,20 @@ int find_substr(ttree::ptrNODE t, int len_of_cur_word, const std::string& substr
     return res;
 }
 
-std::string words [5] {"app", "apple", "cat", "dog", ""};
-int result[5]{2, 0, 3, 3, 2};
+
 
 int main() {
     SetConsoleOutputCP(1251);
 
     ttree::TTREE trie("test1.txt");
     trie.print(true);
-   /* std::string word{};
+
+    std::string word{};
     std::cout << "Задайте необходимое вам слово: ";
-    std::cin >> word;*/
+    std::cin >> word;
 
-    
-
-
-    std::cout << "Кол-во слов содержащих подстроку:" << words[4] << " =";
-    std::cout << find_substr(trie.get_root(), 0, words[4]);
+    std::cout << "Кол-во слов содержащих подстроку:" << word << " =";
+    std::cout << find_substr(trie.get_root(), 0, word);
 
     return 0;
 }
