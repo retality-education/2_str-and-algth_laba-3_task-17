@@ -14,28 +14,43 @@
 * если не удовлетворяет, то сбрасываем до нуля, но если новый символ был началом подстроки, то сбрасываем до 1 и след. рекурсия проверит уже на 2й символ
 */
 
-int cnt_of_words(ttree::ptrNODE t) {
+int cnt_of_words(ttree::ptrNODE t, std::string word) {
     int res = 0;
-    if (t->eow)
+    if (t->eow) {
+
         res = 1;
+    }
+
     for (int i = 0; i < 26; i++)
         if (t->ptrs[i])
-            res += cnt_of_words(t->ptrs[i]);
+            res += cnt_of_words(t->ptrs[i], word + char(i + 'a'));
     return res;
 }
 
-int find_substr(ttree::ptrNODE t, int len_of_cur_word, const std::string& substring) {
+int find_substr(ttree::ptrNODE current, int len_of_cur_word, const std::string& substring, ttree::ptrNODE start) {
     int res = 0;
+
     if (len_of_cur_word == substring.length())
-        res = cnt_of_words(t);
-    else
-        for (int i = 0; i < 26; i++)
-            if (t->ptrs[i]) {
-                if (char(i + 'a') == substring[len_of_cur_word])
-                    res += find_substr(t->ptrs[i], ++len_of_cur_word, substring);
-                else
-                    res += find_substr(t->ptrs[i], char(i + 'a') == substring[0], substring);
+        res = cnt_of_words(current, "");
+    else {
+        for (int i = 0; i < 26; i++) {
+            if (current->ptrs[i]) {
+                if (char(i + 'a') == substring[len_of_cur_word]) {
+                    if (len_of_cur_word == 0)
+                        start = current->ptrs[i];
+                    res += find_substr(current->ptrs[i], ++len_of_cur_word, substring, start);
+                }
+                else {
+                    if (len_of_cur_word != 0)
+                        res += find_substr(start, 0, substring, nullptr);
+                    else {
+                        std::cout << substring;
+                        res += find_substr(current->ptrs[i], 0, substring, nullptr);
+                    }
+                }
             }
+        }
+    }
     return res;
 }
 
@@ -45,14 +60,14 @@ int main() {
     SetConsoleOutputCP(1251);
 
     ttree::TTREE trie("test1.txt");
-    trie.print(true);
+    trie.print(false);
 
     std::string word{};
     std::cout << "Задайте необходимое вам слово: ";
     std::cin >> word;
 
     std::cout << "Кол-во слов содержащих подстроку:" << word << " =";
-    std::cout << find_substr(trie.get_root(), 0, word);
+    std::cout << find_substr(trie.get_root(), 0, word, nullptr);
 
     return 0;
 }
