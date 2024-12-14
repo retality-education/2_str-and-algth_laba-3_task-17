@@ -27,7 +27,7 @@ int cnt_of_words(ttree::ptrNODE t, std::string word) {
     return res;
 }
 
-int find_substr(ttree::ptrNODE current, int len_of_cur_word, const std::string& substring, ttree::ptrNODE start) {
+int find_substr(ttree::ptrNODE current, int len_of_cur_word, const std::string& substring, ttree::ptrNODE start, std::string word) {
     int res = 0;
 
     if (len_of_cur_word == substring.length())
@@ -35,17 +35,21 @@ int find_substr(ttree::ptrNODE current, int len_of_cur_word, const std::string& 
     else {
         for (int i = 0; i < 26; i++) {
             if (current->ptrs[i]) {
+                
                 if (char(i + 'a') == substring[len_of_cur_word]) {
-                    if (len_of_cur_word == 0)
+                    if (len_of_cur_word == 0) {
                         start = current->ptrs[i];
-                    res += find_substr(current->ptrs[i], ++len_of_cur_word, substring, start);
+                    }
+                    res += find_substr(current->ptrs[i], ++len_of_cur_word, substring, start, word + char(i + 'a'));
                 }
                 else {
-                    if (len_of_cur_word != 0)
-                        res += find_substr(start, 0, substring, nullptr);
+                    if (len_of_cur_word != 0) {
+                        std::cout << word << "zxc";
+                        res += find_substr(start, 0, substring, nullptr, "");
+                    }
                     else {
-                        std::cout << substring;
-                        res += find_substr(current->ptrs[i], 0, substring, nullptr);
+                        
+                        res += find_substr(current->ptrs[i], 0, substring, nullptr, "");
                     }
                 }
             }
@@ -60,14 +64,14 @@ int main() {
     SetConsoleOutputCP(1251);
 
     ttree::TTREE trie("test1.txt");
-    trie.print(false);
+    trie.print(true);
 
     std::string word{};
     std::cout << "Задайте необходимое вам слово: ";
     std::cin >> word;
-
+    
     std::cout << "Кол-во слов содержащих подстроку:" << word << " =";
-    std::cout << find_substr(trie.get_root(), 0, word, nullptr);
+    std::cout << find_substr(trie.get_root(), 0, word, nullptr, "");
 
     return 0;
 }
